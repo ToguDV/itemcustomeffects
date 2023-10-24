@@ -1,0 +1,9 @@
+name: itemcustomeffects
+version: '${project.version}'
+main: org.togudv.itemcustomeffects.Itemcustomeffects
+api-version: '1.20'
+commands:
+  poisonSword:
+    description: Your description
+    usage: /<command>
+    permission: yourplugin.yourcommandpermission
