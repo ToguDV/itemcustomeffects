@@ -6,8 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.togudv.itemcustomeffects.models.PlayerItems;
+import org.togudv.itemcustomeffects.utils.NBTEditor;
 
 public class GivePoisonSword implements CommandExecutor {
 
@@ -18,12 +17,8 @@ public class GivePoisonSword implements CommandExecutor {
             Player player = (Player) sender;
 
             ItemStack apple = new ItemStack(Material.APPLE);
-            ItemMeta meta = apple.getItemMeta();
-            meta.setCustomModelData(69);
-
-            apple.setItemMeta(meta);
-            int custom = apple.getItemMeta().getCustomModelData();
-            sender.sendMessage("Vales puro pito, el custom meta es: "+custom);
+            apple = NBTEditor.set(apple, "BananaPuncher714", "customeffects", "item", "owner", "", "postempty", "hola:3" );
+            sender.sendMessage("Vales puro pito, el custom meta es: ");
             player.getInventory().addItem(apple);
 
             return true;
