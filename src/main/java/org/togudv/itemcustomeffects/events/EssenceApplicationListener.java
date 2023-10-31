@@ -1,5 +1,6 @@
 package org.togudv.itemcustomeffects.events;
 
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -14,65 +15,84 @@ import org.togudv.itemcustomeffects.utils.NBTEditor;
 public class EssenceApplicationListener implements Listener {
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
+        if (event.getCurrentItem().getAmount() == 0 || event.getCursor().getAmount() == 0) {
+            HumanEntity player = event.getWhoClicked();
+            player.sendMessage("Inventario vacio");
+            return;
+        }
+
         HumanEntity player = event.getWhoClicked();
         player.sendMessage("Inventario click");
-        if (event.getCurrentItem() == null || event.getCursor() == null)
-            return;
-        player.sendMessage("tiene algo en el cursor y en el click");
+
         ItemStack clickedItem = event.getCurrentItem();
         ItemStack cursor = event.getCursor();
+        if (!event.getWhoClicked().getGameMode().equals(GameMode.SURVIVAL)) {
+            player.sendMessage("Quitate el creativo, putito");
+            return;
+        }
 
-        if(!EssenceUtils.isEssence(cursor) || EssenceUtils.isEssence(clickedItem)) {
+        player.sendMessage("tiene algo en el cursor y en el click");
+        player.sendMessage("CURSO:"+cursor.toString());
+        player.sendMessage("ITEMCLICK:"+clickedItem.toString());
+        if (!EssenceUtils.isEssence(cursor) || EssenceUtils.isEssence(clickedItem)) {
             player.sendMessage("No es esencia o la esencia esta en el click");
             return;
         }
         ItemStack result = clickedItem;
         int i = 0;
         int j = 0;
+        boolean isSamePotion = false;
+        boolean bucle = true;
+        boolean bucle2 = true;
+        /* if (NBTEditor.contains(result, "itemCustomEffects", "item", "hitEffects", 0 + "")) { */
+        player.sendMessage("entramos al bucle");
+        do {
+            isSamePotion = false;
+            if (NBTEditor.contains(cursor, "itemCustomEffects", "essence", "hitEffects", i + "")) {
+                String essencePotionName = NBTEditor.getString(cursor, "itemCustomEffects", "essence", "hitEffects", i + "");
+                PotionEffectType potionEssence = PotionEffectType.getByName(essencePotionName);
+                bucle2 = true;
+                j = 0;
 
-        if (NBTEditor.contains(result, "itemCustomEffects", "item", "hitEffects", 0 + "")) {
-            player.sendMessage("entramos al bucle");
-            while(true) {
-                if (NBTEditor.contains(cursor, "itemCustomEffects", "essence", "hitEffects", i + "")) {
-                    String essencePotionName = NBTEditor.getString(cursor, "itemCustomEffects", "essence", "hitEffects", i+"");
-                    PotionEffectType potionEssence = PotionEffectType.getByName(essencePotionName);
-                    while(true) {
-                        if(NBTEditor.contains(clickedItem, "itemCustomEffects", "item", "hitEffects", j + "")) {
-                            String itemPotionName = NBTEditor.getString(result, "itemCustomEffects", "item", "hitEffects", j+"");
+                if (NBTEditor.contains(clickedItem, "itemCustomEffects", "item", "hitEffects", 0 + "")) {
+                    do {
+                        if (NBTEditor.contains(clickedItem, "itemCustomEffects", "item", "hitEffects", j + "")) {
+                            String itemPotionName = NBTEditor.getString(result, "itemCustomEffects", "item", "hitEffects", j + "");
                             PotionEffectType potionItem = PotionEffectType.getByName(itemPotionName);
-                            if(potionEssence == potionItem) {
-
-                                break;
+                            if (potionEssence == potionItem) {
+                                isSamePotion = true;
+                                bucle2 = false;
                             }
+                            j++;
 
-                            result = NBTEditor.set(result, essencePotionName, "itemCustomEffects", "item", "hitEffects", (j+1)+"");
-                            player.sendMessage("creado result a item con efectos previos");
-                        }
 
-                        else {
-                            break;
+                        } else {
+                            bucle2 = false;
                         }
-                        j++;
+                    } while(bucle2);
+
+                    if (!isSamePotion) {
+                        result = NBTEditor.set(result, essencePotionName, "itemCustomEffects", "item", "hitEffects", (j) + "");
+                        player.sendMessage("creado result a item con efectos previos");
+                    } else {
+                        player.sendMessage("este item ya contiene este efecto, materiales desperdiciados!");
                     }
-
                 }
 
                 else {
-                    break;
+                    result = NBTEditor.set(result, essencePotionName, "itemCustomEffects", "item", "hitEffects", 0 + "");
+                    player.sendMessage("creado result a item sin efectos previos");
                 }
-                i++;
+
+            } else {
+                bucle = false;
             }
-        }
+            i++;
 
-        else {
-            //FALTA RECORRER TODOS LOS EFECTOS DEL ESENCE
-            int index = 0;
-            String essencePotionName = NBTEditor.getString(cursor, "itemCustomEffects", "essence", "hitEffects", index+"");
-            result = NBTEditor.set(result, essencePotionName, "itemCustomEffects", "item", "hitEffects", index+"");
-            player.sendMessage("creado result a item sin efectos previos: essencePotionName="+essencePotionName+", index="+index);
-        }
 
-        if (result == null || cursor == null || clickedItem == null) {
+        } while (bucle);
+
+        if (event.getCurrentItem().getAmount() == 0 || event.getCursor().getAmount() == 0) {
             player.sendMessage("result null o cursor");
             return;
         }
@@ -80,12 +100,12 @@ public class EssenceApplicationListener implements Listener {
         event.setCancelled(true);
         event.setCurrentItem(result);
 
-        int cursorModifier = event.getCursor().getAmount();
+        int cursorModifier = result.getAmount();
         if (cursor.getAmount() - cursorModifier == 0) {
             event.getWhoClicked().setItemOnCursor(new ItemStack(Material.AIR));
             player.sendMessage("Aplicado a no stack");
         } else {
-            cursor.setAmount(cursor.getAmount() + cursorModifier);
+            cursor.setAmount(cursor.getAmount() - 1);
             player.sendMessage("Aplicado a stack");
             event.getWhoClicked().setItemOnCursor(cursor);
         }
