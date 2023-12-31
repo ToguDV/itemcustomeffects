@@ -72,7 +72,8 @@ public class EssenceApplicationListener implements Listener {
                     } while(bucle2);
 
                     if (!isSamePotion) {
-                        result = NBTEditor.set(result, essencePotionName, "itemCustomEffects", "item", "hitEffects", (j) + "");
+                        int count = countItemEffects(clickedItem,"hitEffects");
+                        result = NBTEditor.set(result, essencePotionName, "itemCustomEffects", "item", "hitEffects", (count) + "");
                         player.sendMessage("creado result a item con efectos previos");
                     } else {
                         player.sendMessage("este item ya contiene este efecto, materiales desperdiciados!");
@@ -110,6 +111,23 @@ public class EssenceApplicationListener implements Listener {
             event.getWhoClicked().setItemOnCursor(cursor);
         }
 
+
+    }
+
+    public int countItemEffects(ItemStack clickedItem, String type) {
+        int result = 0;
+        boolean bucle = true;
+        if (NBTEditor.contains(clickedItem, "itemCustomEffects", "item", type, 0 + "")) {
+            do {
+                if (NBTEditor.contains(clickedItem, "itemCustomEffects", "item", type, result + "")) {
+                    result++;
+                } else {
+                    bucle = false;
+                }
+            } while (bucle);
+        }
+
+        return result;
 
     }
 }

@@ -1,5 +1,6 @@
 package org.togudv.itemcustomeffects.commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -42,6 +43,10 @@ public class EssenceSet implements CommandExecutor {
 
                 newEssence = NBTEditor.set(newEssence, effectArg, "itemCustomEffects", "essence", "hitEffects", index+"");
                 player.getInventory().setItemInMainHand(newEssence);
+            }
+
+            else {
+                sender.sendMessage(ChatColor.RED +"Parametros faltantes");
             }
 
             return true;
