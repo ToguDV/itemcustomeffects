@@ -29,16 +29,21 @@ public class HitEvents implements Listener {
         ItemStack weapon = player.getInventory().getItemInMainHand();
         boolean bucle = true;
         int index = 0;
-        if (NBTEditor.contains(weapon, "itemCustomEffects", "item", "hitEffects", 0 + "")) {
+        if (NBTEditor.contains(weapon, "itemCustomEffects", "item", "hiteffects", 0 + "")) {
             do {
-                if (NBTEditor.contains(weapon, "itemCustomEffects", "item", "hitEffects", index + "")) {
-                    String essencePotionName = NBTEditor.getString(weapon, "itemCustomEffects", "item", "hitEffects", index + "");
+                if (NBTEditor.contains(weapon, "itemCustomEffects", "item", "hiteffects", index + "")) {
+                    String essencePotionName = NBTEditor.getString(weapon, "itemCustomEffects", "item", "hiteffects", index + "");
                     if (victim instanceof Mob) {
                         Mob mob = (Mob) victim;
                         player.sendMessage("Potion name" + essencePotionName);
-                        PotionEffectType veneno = PotionEffectType.getByName(essencePotionName);
+                        String[] valores = essencePotionName.split(",");
+                        String nombre = valores[0];
+                        int nivel = Integer.parseInt(valores[1]);
+                        int duracion = Integer.parseInt(valores[2]);
+                        float probabilidad = Float.parseFloat(valores[3]);
+                        PotionEffectType veneno = PotionEffectType.getByName(nombre);
                         //PotionEffectType veneno = PotionEffectType.getByName("poison");
-                        mob.addPotionEffect(new PotionEffect(veneno, 300, 2));
+                        mob.addPotionEffect(new PotionEffect(veneno, duracion, nivel));
                     }
                     index++;
                 } else {

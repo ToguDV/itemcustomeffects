@@ -45,19 +45,32 @@ public class EssenceApplicationListener implements Listener {
         boolean bucle = true;
         boolean bucle2 = true;
         /* if (NBTEditor.contains(result, "itemCustomEffects", "item", "hitEffects", 0 + "")) { */
+        String triggerType = "";
+        if(NBTEditor.contains(cursor, "itemCustomEffects", "essence", "hiteffects", 0 + "")) {
+            triggerType = "hiteffects";
+        }
+
+        if(NBTEditor.contains(cursor, "itemCustomEffects", "essence", "hurteffects", 0 + "")) {
+            triggerType = "hurteffects";
+        }
+
+        if(NBTEditor.contains(cursor, "itemCustomEffects", "essence", "holdeffects", 0 + "")) {
+            triggerType = "holdeffects";
+        }
+
         player.sendMessage("entramos al bucle");
         do {
             isSamePotion = false;
-            if (NBTEditor.contains(cursor, "itemCustomEffects", "essence", "hitEffects", i + "")) {
-                String essencePotionName = NBTEditor.getString(cursor, "itemCustomEffects", "essence", "hitEffects", i + "");
+            if (NBTEditor.contains(cursor, "itemCustomEffects", "essence", triggerType, i + "")) {
+                String essencePotionName = NBTEditor.getString(cursor, "itemCustomEffects", "essence", triggerType, i + "");
                 PotionEffectType potionEssence = PotionEffectType.getByName(essencePotionName);
                 bucle2 = true;
                 j = 0;
 
-                if (NBTEditor.contains(clickedItem, "itemCustomEffects", "item", "hitEffects", 0 + "")) {
+                if (NBTEditor.contains(clickedItem, "itemCustomEffects", "item", triggerType, 0 + "")) {
                     do {
-                        if (NBTEditor.contains(clickedItem, "itemCustomEffects", "item", "hitEffects", j + "")) {
-                            String itemPotionName = NBTEditor.getString(result, "itemCustomEffects", "item", "hitEffects", j + "");
+                        if (NBTEditor.contains(clickedItem, "itemCustomEffects", "item", triggerType, j + "")) {
+                            String itemPotionName = NBTEditor.getString(result, "itemCustomEffects", "item", triggerType, j + "");
                             PotionEffectType potionItem = PotionEffectType.getByName(itemPotionName);
                             if (potionEssence == potionItem) {
                                 isSamePotion = true;
@@ -72,8 +85,8 @@ public class EssenceApplicationListener implements Listener {
                     } while(bucle2);
 
                     if (!isSamePotion) {
-                        int count = countItemEffects(clickedItem,"hitEffects");
-                        result = NBTEditor.set(result, essencePotionName, "itemCustomEffects", "item", "hitEffects", (count) + "");
+                        int count = countItemEffects(clickedItem,triggerType);
+                        result = NBTEditor.set(result, essencePotionName, "itemCustomEffects", "item", triggerType, (count) + "");
                         player.sendMessage("creado result a item con efectos previos");
                     } else {
                         player.sendMessage("este item ya contiene este efecto, materiales desperdiciados!");
@@ -81,7 +94,7 @@ public class EssenceApplicationListener implements Listener {
                 }
 
                 else {
-                    result = NBTEditor.set(result, essencePotionName, "itemCustomEffects", "item", "hitEffects", 0 + "");
+                    result = NBTEditor.set(result, essencePotionName, "itemCustomEffects", "item", triggerType, 0 + "");
                     player.sendMessage("creado result a item sin efectos previos");
                 }
 
