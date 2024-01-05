@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+import org.togudv.itemcustomeffects.utils.EssenceUtils;
 import org.togudv.itemcustomeffects.utils.TriggerTypes;
 import org.togudv.itemcustomeffects.utils.NBTEditor;
 
@@ -27,18 +28,21 @@ public class EssenceSet implements CommandExecutor {
                 triggerType = triggerType.toLowerCase();
                 String potionName = args[1];
                 String effectLevel = args[2];
-                String effectDuration = args[3];
+                String effectDuration = "";
+                int duration = Integer.parseInt(args[3]);
+                duration = duration * 20;
+                effectDuration = duration + "";
                 String effectProbs = args[4];
                 String result = potionName+","+effectLevel+","+effectDuration+","+effectProbs+"f";
-                PotionEffectType potionType = PotionEffectType.getByName(potionName);
+                PotionEffectType potionCommand = PotionEffectType.getByName(potionName);
                 ItemStack newEssence = player.getInventory().getItemInMainHand();
                 int index = 0;
                 while(true) {
                     if ( NBTEditor.contains( newEssence, "itemCustomEffects", "essence", triggerType, index+"") ) {
-                        String currentPotionName = NBTEditor.getString(newEssence, "itemCustomEffects", "essence", triggerType, index+"");
-                        PotionEffectType potionCurrent = PotionEffectType.getByName(currentPotionName);
+                        String currentPotionValues = NBTEditor.getString(newEssence, "itemCustomEffects", "essence", triggerType, index+"");
+                        PotionEffectType potionItem = PotionEffectType.getByName(EssenceUtils.getPotionValues(currentPotionValues)[0]);
 
-                        if(potionCurrent == potionType) {
+                        if(potionItem == potionCommand) {
                             sender.sendMessage("Poción repetida!");
                             return false;
                         }

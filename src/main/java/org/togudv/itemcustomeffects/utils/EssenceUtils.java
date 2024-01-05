@@ -10,4 +10,8 @@ public class EssenceUtils {
 
         return false;
     }
+
+    public static String[] getPotionValues(String values) {
+        return values.split(",");
+    }
 }

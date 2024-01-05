@@ -19,6 +19,7 @@ public class HitEvents implements Listener {
     public HitEvents(PlayerItems playerItems) {
         this.playerItems = playerItems;
     }
+    float randomLimit  = 1000;
 
     @EventHandler
     public void OnPlayerHit(EntityDamageByEntityEvent event) {
@@ -37,13 +38,14 @@ public class HitEvents implements Listener {
                         Mob mob = (Mob) victim;
                         player.sendMessage("Potion name" + essencePotionName);
                         String[] valores = essencePotionName.split(",");
-                        String nombre = valores[0];
-                        int nivel = Integer.parseInt(valores[1]);
-                        int duracion = Integer.parseInt(valores[2]);
-                        float probabilidad = Float.parseFloat(valores[3]);
-                        PotionEffectType veneno = PotionEffectType.getByName(nombre);
-                        //PotionEffectType veneno = PotionEffectType.getByName("poison");
-                        mob.addPotionEffect(new PotionEffect(veneno, duracion, nivel));
+                        String potionName = valores[0];
+                        int level = Integer.parseInt(valores[1]);
+                        int duration = Integer.parseInt(valores[2]);
+                        float probs = Float.parseFloat(valores[3]);
+                        PotionEffectType potion = PotionEffectType.getByName(potionName);
+                        if( (float)(Math.random()*randomLimit+1) <= (probs*10)) {
+                            mob.addPotionEffect(new PotionEffect(potion, duration, level));
+                        }
                     }
                     index++;
                 } else {
