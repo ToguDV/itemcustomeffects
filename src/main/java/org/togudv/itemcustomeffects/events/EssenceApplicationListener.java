@@ -1,5 +1,6 @@
 package org.togudv.itemcustomeffects.events;
 
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -21,8 +22,10 @@ import java.util.Objects;
 public class EssenceApplicationListener implements Listener {
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
+        if(event.getCurrentItem() == null || event.getCursor() == null) {
+            return;
+        }
         if (event.getCurrentItem().getAmount() == 0 || event.getCursor().getAmount() == 0) {
-            HumanEntity player = event.getWhoClicked();
             return;
         }
 
@@ -31,7 +34,6 @@ public class EssenceApplicationListener implements Listener {
         ItemStack clickedItem = event.getCurrentItem();
         ItemStack cursor = event.getCursor();
         if (!event.getWhoClicked().getGameMode().equals(GameMode.SURVIVAL)) {
-            player.sendMessage("Quitate el creativo, putito");
             return;
         }
         if (!EssenceUtils.isEssence(cursor) || EssenceUtils.isEssence(clickedItem)) {
@@ -57,7 +59,6 @@ public class EssenceApplicationListener implements Listener {
             triggerType = "holdeffects";
         }
 
-        player.sendMessage("entramos al bucle");
         do {
             isSamePotion = false;
             if (NBTEditor.contains(cursor, "itemCustomEffects", "essence", triggerType, i + "")) {
@@ -88,17 +89,15 @@ public class EssenceApplicationListener implements Listener {
                     if (!isSamePotion) {
                         int count = countItemEffects(clickedItem,triggerType);
                         result = NBTEditor.set(result, essencePotionValues, "itemCustomEffects", "item", triggerType, (count) + "");
-                        player.sendMessage("creado result a item con efectos previos");
                         result = addItemLore(result, cursor);
                     } else {
-                        player.sendMessage("este item ya contiene este efecto, materiales desperdiciados!");
+                        player.sendMessage(ChatColor.RED+"Este item ya contiene este efecto o uno incompatible, materiales desperdiciados!");
                     }
                 }
 
                 else {
                     result = NBTEditor.set(result, essencePotionValues, "itemCustomEffects", "item", triggerType, 0 + "");
                     result = addItemLore(result, cursor);
-                    player.sendMessage("creado result a item sin efectos previos");
                 }
 
             } else {
@@ -110,7 +109,6 @@ public class EssenceApplicationListener implements Listener {
         } while (bucle);
 
         if (event.getCurrentItem().getAmount() == 0 || event.getCursor().getAmount() == 0) {
-            player.sendMessage("result null o cursor");
             return;
         }
 
@@ -120,10 +118,8 @@ public class EssenceApplicationListener implements Listener {
         int cursorModifier = result.getAmount();
         if (cursor.getAmount() - cursorModifier == 0) {
             event.getWhoClicked().setItemOnCursor(new ItemStack(Material.AIR));
-            player.sendMessage("Aplicado a no stack");
         } else {
             cursor.setAmount(cursor.getAmount() - 1);
-            player.sendMessage("Aplicado a stack");
             event.getWhoClicked().setItemOnCursor(cursor);
         }
 

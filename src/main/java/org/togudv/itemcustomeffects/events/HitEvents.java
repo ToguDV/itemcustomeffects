@@ -36,7 +36,6 @@ public class HitEvents implements Listener {
                     String essencePotionName = NBTEditor.getString(weapon, "itemCustomEffects", "item", "hiteffects", index + "");
                     if (victim instanceof Mob) {
                         Mob mob = (Mob) victim;
-                        player.sendMessage("Potion name" + essencePotionName);
                         String[] valores = essencePotionName.split(",");
                         String potionName = valores[0];
                         int level = Integer.parseInt(valores[1]);
@@ -46,6 +45,19 @@ public class HitEvents implements Listener {
                         if( (float)(Math.random()*randomLimit+1) <= (probs*10)) {
                             mob.addPotionEffect(new PotionEffect(potion, duration, level));
                         }
+                    }
+                    if(victim instanceof Player) {
+                        Player victimP = (Player) victim;
+                        String[] valores = essencePotionName.split(",");
+                        String potionName = valores[0];
+                        int level = Integer.parseInt(valores[1]);
+                        int duration = Integer.parseInt(valores[2]);
+                        float probs = Float.parseFloat(valores[3]);
+                        PotionEffectType potion = PotionEffectType.getByName(potionName);
+                        if( (float)(Math.random()*randomLimit+1) <= (probs*10)) {
+                            victimP.addPotionEffect(new PotionEffect(potion, duration, level));
+                        }
+
                     }
                     index++;
                 } else {

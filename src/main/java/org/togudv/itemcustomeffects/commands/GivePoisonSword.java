@@ -18,7 +18,6 @@ public class GivePoisonSword implements CommandExecutor {
 
             ItemStack apple = new ItemStack(Material.APPLE);
             apple = NBTEditor.set(apple, "BananaPuncher714", "customeffects", "item", "owner", "", "postempty", "hola:3" );
-            sender.sendMessage("Vales puro pito, el custom meta es: ");
             player.getInventory().addItem(apple);
 
             return true;

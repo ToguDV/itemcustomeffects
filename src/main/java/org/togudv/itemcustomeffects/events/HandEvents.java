@@ -25,7 +25,7 @@ public class HandEvents implements Listener {
 
         ItemStack currentItem = player.getInventory().getItemInMainHand();
         if (playerItems.getPreviousItem() != null && !currentItem.equals(playerItems.getPreviousItem())) {
-            player.sendMessage("Has cambiado el ítem en tu mano.");
+           // player.sendMessage("Has cambiado el ítem en tu mano.");
         }
 
         playerItems.setPreviousItem(currentItem);
